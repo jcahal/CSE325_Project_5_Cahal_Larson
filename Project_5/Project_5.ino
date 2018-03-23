@@ -8,6 +8,7 @@
 #include <Adafruit_GPS.h>
 #include "DFR_Key.h"
 
+#define PI 3.14159265
 
 Adafruit_GPS GPS(&Serial3);                   // define GPS object connected to Serial 3
 DFR_Key keypad;  
@@ -68,7 +69,7 @@ void setup() {
   GPS.sendCommand(PGCMD_ANTENNA);
   useInterrupt(true);
 
-    ///Setting the reference (Lat and Lon)///
+  ///Setting the reference (Lat and Lon)///
   localkey = 0;
   while (localkey != 1) {    // wait for select button
     lcd.clear();
@@ -79,9 +80,77 @@ void setup() {
     delay(100);               // delay to make display visible
   }
   
-  ReadGPS(); 
+  ReadGPS();
   latDestination = lat;     // saving the destiantion point
   lonDestination = lon;     // saving the destiantion point
+
+  lcd.clear();
+  lcd.print("LAT Adjustment");
+  lcd.setCursor(0,1);
+  lcd.print("Phase"); 
+  delay(2000);
+
+  localkey = 0;
+  while (localkey != 1) {    // wait for select button
+    lcd.clear();
+    
+    localkey = keypad.getKey();
+    if (localkey == 3)
+      latDestination += 5;
+    if (localkey == 4)
+      latDestination -= 5;
+    if (localkey == 5)
+      lonDestination -= 1;
+    
+    lcd.print(latDestination); 
+    delay(100);
+  }
+
+  lcd.clear();
+  lcd.print("LON Adjustment");
+  lcd.setCursor(0,1);
+  lcd.print("Phase"); 
+  delay(2000);
+
+  localkey = 0;
+  while (localkey != 1) {    // wait for select button
+    lcd.clear();
+    
+    localkey = keypad.getKey();
+    if (localkey == 3)
+      lonDestination += 5;
+    if (localkey == 4)
+      lonDestination -= 5;
+    if (localkey == 5)
+      lonDestination -= 1;
+    
+    lcd.print(lonDestination); 
+    delay(100);
+  }
+
+
+// Below will pull new location on DOWN press
+/*
+  localkey = 0;
+  while (localkey != 1) {    // wait for select button
+    lcd.clear();
+    
+    localkey = keypad.getKey();
+    if(localkey == 4) {
+      ReadGPS();
+      latDestination = lat;     // saving the destiantion point
+      lonDestination = lon;     // saving the destiantion point
+      localkey = 0;
+    }
+    
+    lcd.print("DLA:");
+    lcd.print(latDestination);
+    lcd.setCursor(0,1);
+    lcd.print("DLO:");
+    lcd.print(lonDestination); 
+    delay(100);
+  }
+*/
   
   localkey = 0;
   while (localkey != 1) {   // wait for select button
@@ -151,7 +220,10 @@ void ReadHeading() { // Output: HEADING
 void CalculateBearing() {
   // calculate bearing angle based on current and destination locations (GPS coordinates)
   Bearing = atan2((latDestination - lat),(lonDestination - lon));
-  Bearing = Bearing * RAD_TO_DEG;
+  Bearing = Bearing  * 180 / PI;
+  if(Bearing < 0) {
+    Bearing += 360;
+  }
 }
 
 void CalculateSteering() { // Input: HEADING // Output: STEERANGLE
@@ -217,7 +289,9 @@ void CalculateSteering() { // Input: HEADING // Output: STEERANGLE
 
 void CalculateDistance() {
   // calculate distance to destination based on current and destination coordinates
-  distance = sqrt(pow((lonDestination - lon),2) + pow((latDestination - lat),2));  
+  float deltaX = (lonDestination - lon) * 100000;
+  float deltaY = (latDestination - lat) * 100000;
+  distance = sqrt(pow(deltaX, 2.0) + pow(deltaY, 2.0)) / 100000;  
 }
 
 void Actuate() {
@@ -263,6 +337,16 @@ void printLocationOnLCD() {
   lcd.print(lon);
 }
 
+
+void printDestinationOnLCD() {
+  lcd.setCursor(0,0);
+  lcd.print("DLA:");
+  lcd.print(latDestination);
+  lcd.setCursor(0,1);
+  lcd.print("DLO:");
+  lcd.print(lonDestination);
+}
+
 void printDistanceOnLCD() {
   lcd.setCursor(0,1);
   lcd.print("D:");
@@ -277,8 +361,11 @@ void loop() {
   // You can print anything on the LCD to debug your program!!!
   printHeadingOnLCD();
   printDistanceOnLCD();
-  delay(1000);
+  delay(2000);
   lcd.clear();
   printLocationOnLCD();
-  delay(1000);
+  delay(2000);
+  lcd.clear();
+  printDestinationOnLCD();
+  delay(2000);
 }
