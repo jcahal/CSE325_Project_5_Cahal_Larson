@@ -25,6 +25,8 @@ int carSpeedPin = 2;      // pin for DC motor (PWM for motor driver)
 float errorHeadingRef = 0;        // error
 long int lat;  // GPS latitude in degree decimal multiplied by 100000
 long int lon;  // GPS latitude in degree decimal multiplied by 100000
+long int lat = 0;  // GPS latitude in degree decimal multiplied by 100000
+long int lon = 0;  // GPS latitude in degree decimal multiplied by 100000
 long int latDestination = 33.423933 * 100000;     // reference destination
 long int lonDestination = -111.939585 * 100000;   // reference destination
 float Bearing = 0;                // bearing angle to destination
