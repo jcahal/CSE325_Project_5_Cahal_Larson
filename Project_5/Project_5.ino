@@ -49,7 +49,8 @@ void setup() {
     while (1);
   }
 
-  byte c_data[22] = {255, 255, 0, 0, 250, 255, 205, 253, 175, 2, 16, 2, 1, 0, 254, 255, 1, 0, 232, 3, 27, 4}; // from P4
+  //byte c_data[22] = {255, 255, 0, 0, 250, 255, 205, 253, 175, 2, 16, 2, 1, 0, 254, 255, 1, 0, 232, 3, 27, 4}; // from P4
+  byte c_data[22] = {0, 0, 0, 0, 0, 0, 82, 253, 156, 2, 80, 1, 0, 0, 0, 0, 2, 0, 232, 3, 184, 2}; //old main
   //byte c_data[22] = {0, 0, 0, 0, 0, 0, 211, 3, 117, 4, 55, 5, 255, 255, 255, 255, 255, 255, 232, 3, 21, 3};
   bno.setCalibData(c_data);                                                                                       // SET CALIBRATION DATA
   bno.setExtCrystalUse(true);
@@ -219,8 +220,7 @@ void ReadHeading() { // Output: HEADING
 
 void CalculateBearing() {
   // calculate bearing angle based on current and destination locations (GPS coordinates)
-  Bearing = atan2((latDestination - lat),(lonDestination - lon));
-  Bearing = Bearing  * 180 / PI;
+  Bearing = atan2((latDestination - lat),(lonDestination - lon)) * (180 / PI);
   if(Bearing < 0) {
     Bearing += 360;
   }
