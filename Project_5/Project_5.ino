@@ -79,13 +79,13 @@ void setup() {
     lcd.setCursor(0, 1);
     lcd.print("to save dest."); 
     delay(100);               // delay to make display visible
-  }
+  } 
   
   ReadGPS();
   latDestination = lat;     // saving the destiantion point
   lonDestination = lon;     // saving the destiantion point
 
-  lcd.clear();
+  /*lcd.clear();
   lcd.print("LAT Adjustment");
   lcd.setCursor(0,1);
   lcd.print("Phase"); 
@@ -128,7 +128,7 @@ void setup() {
     lcd.print(lonDestination); 
     delay(100);
   }
-
+*/
 
 // Below will pull new location on DOWN press
 /*
@@ -220,7 +220,7 @@ void ReadHeading() { // Output: HEADING
 
 void CalculateBearing() {
   // calculate bearing angle based on current and destination locations (GPS coordinates)
-  Bearing = atan2((latDestination - lat),(lonDestination - lon)) * (180 / PI);
+  Bearing = 90 - atan2((latDestination - lat),(lonDestination - lon)) * (180 / PI);
   if(Bearing < 0) {
     Bearing += 360;
   }
@@ -297,7 +297,7 @@ void CalculateDistance() {
 void Actuate() {
   // set car's direction and speed
   carSpeed = 20;
-  if(distance <= 1) {
+  if(distance < 4) {
     int carSpeed = 0;
   }
 
