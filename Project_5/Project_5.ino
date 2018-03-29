@@ -298,7 +298,7 @@ void Actuate() {
   // set car's direction and speed
   carSpeed = 20;
   if(distance < 4) {
-    int carSpeed = 0;
+    carSpeed = 0;
   }
 
   
